@@ -1,0 +1,112 @@
+void removerFuncionarioPorCPF(FuncionarioList *lista, char cpf[]) {
+    // Verifica se a lista de funcionarios esta vazia
+    if (lista == NULL || lista->cabeca->prox == NULL) {
+        printf("\nLista de funcionarios vazia.\n");
+        return;
+    }
+
+    // Inicia a partir do primeiro da lista
+    Funcionario *atual = lista->cabeca->prox;
+    while (atual != NULL) {
+        // Verifica se o CPF do funcionario atual corresponde ao CPF informado
+        if (strcmp(atual->cpf, cpf) == 0) {
+            // Atualiza os ponteiros para remover o funcionario da lista
+            if (atual->ant != NULL) {
+                atual->ant->prox = atual->prox;
+            }
+            if (atual->prox != NULL) {
+                atual->prox->ant = atual->ant;
+            }
+
+            // Se o funcionario a ser removido é o primeiro da lista, atualiza o ponteiro da lista
+            if (lista->cabeca->prox == atual) {
+                lista->cabeca->prox = atual->prox;
+            }
+
+            // Libera a memoria alocada para o funcionario removido
+            free(atual);
+            printf("\nFuncionario removido com sucesso.\n");
+            return;
+        }
+        atual = atual->prox; // Move para o próximo funcionario na lista
+    }
+
+    printf("\nFuncionario com CPF %s nao encontrado.\n", cpf);
+}
+
+
+
+
+void removerDepartamentoPorCodigo(FuncionarioList *lista, int codigo) {
+    // Verifica se a lista esta vazia
+    if (lista == NULL || lista->cabeca->prox == NULL) {
+        printf("\nLista de departamentos vazia.\n");
+        return;
+    }
+
+    // Inicia a remocao percorrendo a lista de funcionarios
+    Funcionario *atual = lista->cabeca->prox;
+    while (atual != NULL) {
+        // Verifica se o departamento do funcionario atual possui o codigo fornecido
+        if (atual->dep->cod == codigo) {
+            // Verifica se existem funcionarios vinculados ao departamento
+            Funcionario *verifica = lista->cabeca->prox;
+
+            int funcionariosVinculados = 0;
+            //Conta os funcionários - sem essa contagem o departamento ainda é removido se houver 1 funcionario
+            while (verifica != NULL) {
+                if (verifica->dep->cod == codigo) {
+                    funcionariosVinculados++;
+                }
+                verifica = verifica->prox;
+            }
+            if (funcionariosVinculados > 0) {
+                printf("\nDepartamento nao pode ser removido.\nExistem funcionarios vinculados a ele.\n");
+                return;
+            }
+
+            // Remove o departamento da lista
+            if (atual->ant != NULL) {
+                atual->ant->prox = atual->prox;
+            }
+            if (atual->prox != NULL) {
+                atual->prox->ant = atual->ant;
+            } else {
+                lista->cabeca->prox = atual->prox;
+            }
+            free(atual->dep); // Libera a memoria alocada para o departamento removido
+            printf("\nDepartamento removido com sucesso.\n");
+            return;
+        }
+        atual = atual->prox; // Move para o proximo funcionário na lista
+    }
+    printf("\nDepartamento com codigo %d nao encontrado.\n", codigo);
+}
+
+
+void buscarFuncionarioPorCPF(FuncionarioList *lista, char cpf[]) {
+    // Verifica se a lista esta vazia
+    if (lista == NULL || lista->cabeca->prox == NULL) {
+        printf("\nLista de funcionarios vazia.\n");
+        return;
+    }
+
+    // Inicia a busca percorrendo a lista de funcionarios
+    Funcionario *atual = lista->cabeca->prox;
+    while (atual != NULL) {
+        // Verifica se o CPF do funcionario atual é o mesmo do CPF fornecido
+        if (strcmp(atual->cpf, cpf) == 0) {
+            // Exibe as informacoes do funcionario encontrado
+            printf("\nFuncionario encontrado:\n");
+            printf("Nome: %s\n", atual->nome);
+            printf("CPF: %s\n", atual->cpf);
+            printf("Idade: %d\n", atual->idade);
+            printf("Salario Bruto: %.2f\n", atual->sal_B);
+            printf("Departamento: %s\n", atual->dep->nome);
+            printf("Bonificacao do Departamento: %.2f\n", atual->dep->bonus);
+            return;
+        }
+        atual = atual->prox; // Move para o proximo funcionário na lista
+    }
+    printf("\nFuncionario com CPF %s nao encontrado.\n", cpf);
+}
